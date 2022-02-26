@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <curl/curl.h>
+#include "GetOAuthAccessToken.h"
+
+int main(int argc, char *argv[]){
+    char code[64];
+    GetOAuthAccessToken(code,0);
+    //yMz7Q~MN.Fj.qonO4pHhequoZOepVY~uOKGqp
+    char client_secret[]="yMz7Q~MN.Fj.qonO4pHhequoZOepVY~uOKGqp";
+    char redirect_uri[]="http://localhost:10604/callback";
+    char client_id[]="d2a916ba-1bd0-4255-825e-07671bf56fe1";
+    CURL *curl;
+    CURLcode res;
+    curl = curl_easy_init();
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://login.live.com/oauth20_token.srf");
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+        headers = curl_slist_append(headers, "Cookie: MSCC=54.86.50.139-US");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        char data[256];
+        sprintf(data,"client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code&redirect_uri=%s",client_id,client_secret,&code[9],redirect_uri);
+
+        printf("%s\n",data);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+        res = curl_easy_perform(curl);
+    }
+    curl_easy_cleanup(curl);
+    return (int)res;
+}

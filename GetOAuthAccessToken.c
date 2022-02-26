@@ -9,12 +9,7 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include<unistd.h>
-#define	PORT 10604
-#define IP "127.0.0.1"
-#define ERROR404 "HTTP/1.1 404 Not Found\n\n"
-#define HTTPOK "HTTP/1.1 200 OK\n\n"
-void listen_again(int c_sockfd);
-_Bool UrlAnalyze(int c_sockfd,char* accesstoken);
+#include"GetOAuthAccessToken.h"
 
 void GetOAuthAccessToken(char* accesstoken,_Bool debbug){
 	struct sockaddr_in s_addr , c_addr;

@@ -1,5 +1,6 @@
 CC=gcc
-client:s.c
-	$(CC) *.c -o server.e
+LIB=-lcurl -lm
+client:*.c
+	$(CC) *.c -o server.e $(LIB)
 clean:
 	rm -rf *.e *.out

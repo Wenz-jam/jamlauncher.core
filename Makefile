@@ -1,4 +1,4 @@
-CC=gcc
+CC=clang
 LIB=-lcurl -lm
 client:*.c
 	$(CC) *.c -o server.e $(LIB)

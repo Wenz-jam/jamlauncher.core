@@ -1,23 +1,11 @@
-#include<stdio.h>
-#include<pthread.h>
-#include<fcntl.h>
-#include<sys/socket.h>
-#include<arpa/inet.h>
-#include<ifaddrs.h>
-#include<string.h>
-#include<stdlib.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include<unistd.h>
-#include"GetOAuthAccessToken.h"
-
-void GetOAuthAccessToken(char* accesstoken,_Bool debbug){
+#include "include.h"
+_Bool GetOAuthAccessToken(char* accesstoken,_Bool debbug){
 	struct sockaddr_in s_addr , c_addr;
 	socklen_t addrlen =sizeof(struct sockaddr_in);
 	int s_sockfd =socket(AF_INET,SOCK_STREAM,0);
 	if(s_sockfd==-1){
 		perror("socket error!");
-		exit(1);
+		return false;
 	}
 	memset(&s_addr,0,addrlen);
 	s_addr.sin_family=AF_INET;
@@ -29,12 +17,12 @@ void GetOAuthAccessToken(char* accesstoken,_Bool debbug){
 		&opt,sizeof(opt));
 	if(bind(s_sockfd,(const struct sockaddr *)&s_addr,addrlen)==-1){
 		perror("bind error!");
-		exit(1);
+		return -1;
 	}
 	printf("bind successful\n");
 	if(listen(s_sockfd,10)==-1){
 		perror("liten error!");
-		exit(1);
+		return false;
 	}
 	printf("listen successful\n");
 	pthread_t ptid;
@@ -42,14 +30,15 @@ void GetOAuthAccessToken(char* accesstoken,_Bool debbug){
 		int c_sockfd=accept(s_sockfd,(struct sockaddr *)&c_addr,&addrlen); 
 		if(c_sockfd==-1){
 			perror("accept error");
-			exit(1);
+			return false;
 		}
         if(UrlAnalyze(c_sockfd,accesstoken)){
             break;
         }
 	}
+    close(s_sockfd);
     printf("%s\n",accesstoken);
-	return ;
+	return true;
 }
 
 _Bool UrlAnalyze(int c_sockfd,char* accesstoken){
